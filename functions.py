@@ -4,24 +4,24 @@
 
 ##### constants
 from config import (
-        OLD_SQUASH_PROJECTS_URL,
+        OLD_SQUASH_URL,
         OLD_SQUASH_USER,
         OLD_SQUASH_PASS,
 )
 
 ##### libraries
 from requests import Request, Session
-#from requests.auth import HTTPBasicAuth
- 
+
+
+
+
+###### functions
 def get_projects_list():
-    #get_auth = requests.get(OLD_SQUASH_PROJECTS_URL, auth=HTTPBasicAuth(OLD_SQUASH_USER,OLD_SQUASH_PASS))
     with Session() as s:
         s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
-        resp = s.get(OLD_SQUASH_PROJECTS_URL)
-    return resp.content.decode()
+        resp = s.get(OLD_SQUASH_URL + '/administration/projects').content.decode()
+    return resp
 
-def parse_response(resp):
-    pass
 
 
 
