@@ -10,6 +10,7 @@ from functions import *
 ###### start 
 def main():
     resp = get_projects_list()
+    #print(type(resp))
     print(resp)
  
 if __name__ == "__main__":

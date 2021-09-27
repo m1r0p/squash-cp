@@ -18,6 +18,10 @@ def get_projects_list():
     with Session() as s:
         s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
         resp = s.get(OLD_SQUASH_PROJECTS_URL)
-    return resp.content
- 
+    return resp.content.decode()
+
+def parse_response(resp):
+    pass
+
+
 
