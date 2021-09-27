@@ -16,7 +16,7 @@ from requests import Request, Session
 
 
 ###### functions
-def get_projects_list():
+def get_projects_dict():
     with Session() as s:
         s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
         resp = s.get(OLD_SQUASH_URL + '/administration/projects').content.decode()

@@ -9,7 +9,7 @@ from functions import *
 
 ###### start 
 def main():
-    resp = get_projects_list()
+    resp = get_projects_dict()
     #print(type(resp))
     print(resp)
  
