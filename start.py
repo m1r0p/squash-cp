@@ -9,8 +9,8 @@ from functions import *
 
 ###### start 
 def main():
-    pass
- 
+    resp = get_projects_list()
+    print(resp)
  
 if __name__ == "__main__":
     main()
