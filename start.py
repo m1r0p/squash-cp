@@ -2,9 +2,9 @@
  
 ###### import
 
-##### from config
+##### constants
 
-##### from functions
+##### functions
 from functions import *
 
 ###### start 
