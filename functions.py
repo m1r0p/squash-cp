@@ -12,7 +12,7 @@ from config import (
 ##### libraries
 from requests import Request, Session
 from bs4 import BeautifulSoup
-import selenium
+#import selenium
 
 
 ###### functions
