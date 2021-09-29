@@ -9,12 +9,13 @@ from functions import *
 
 ###### start 
 def main():
-    resp = get_projects()
+    #resp = get_projects()
     #resp = get_test_cases()
+    get_test_cases()
 
     #print(type(resp))
-    for k,v in resp.items():
-        print(k,v)
+    #for k,v in resp.items():
+    #   print(k,v)
  
 if __name__ == "__main__":
     main()
