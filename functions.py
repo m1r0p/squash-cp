@@ -53,8 +53,13 @@ def get_test_cases(id_list):
         time.sleep(5)
         for pr_id in id_list:
             find_el = driver.find_element_by_id('TestCaseLibrary-' + pr_id)
-            print("id = %s, elem = %s" % (pr_id, find_el.get_attribute('innerHTML')))
+            #print("id = %s, elem = %s" % (pr_id, find_el.get_attribute('innerHTML')))
             find_el.find_element_by_class_name("jstree-icon").click()
+            find_el = driver.find_element_by_tag_name("ul")
+            find_el = find_el.find_element_by_tag_name("li")
+            
+            print("id = %s, elem = %s" % (pr_id, find_el.get_attribute('innerHTML')))
+            #print("id = %s, html = %s" % (pr_id, find_el))
             time.sleep(5)
     
 
@@ -66,7 +71,7 @@ def get_test_cases(id_list):
 
 
   
-    return sub_clickable 
+    #return sub_clickable 
 
 
 
