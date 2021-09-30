@@ -37,7 +37,7 @@ def get_projects():
 def get_requirements():
     pass
 
-def get_test_cases():
+def get_test_cases(id_list):
     #test_cases = dict()
     driver = webdriver.Firefox(
             executable_path = "./geckodriver"
@@ -51,6 +51,13 @@ def get_test_cases():
         driver.find_element_by_id("j_password").send_keys(OLD_SQUASH_PASS)
         driver.find_element_by_id("login-form-button-set").click()
         time.sleep(5)
+        for pr_id in id_list:
+            find_el = driver.find_element_by_id('TestCaseLibrary-' + pr_id)
+            print("id = %s, elem = %s" % (pr_id, find_el.get_attribute('innerHTML')))
+            find_el.find_element_by_class_name("jstree-icon").click()
+            time.sleep(5)
+    
+
     except Exception as _ex:
         print(_ex)
     finally:
@@ -59,7 +66,7 @@ def get_test_cases():
 
 
   
-    #return parsed_resp
+    return sub_clickable 
 
 
 
