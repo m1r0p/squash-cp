@@ -16,9 +16,9 @@ def main():
     test_cases = get_test_cases(pr_list)
     for i in test_cases:
         for j in i:
-            if j.kind == 'folder':
+            if j.kind == 'project':
                 print("####################################################################################################")
-                print("id = %s name = %s" % (j.self_id, j.name))
+                print("id = %s name = %s kind = %s" % (j.self_id, j.name, j.kind))
                 print("inner objects: %s" % j.inner_objects)
 
 if __name__ == "__main__":

@@ -60,7 +60,6 @@ def get_requirements():
 
 def get_test_cases(project_list):
     object_list = list()
-    final_list = list()
     
     driver = webdriver.Firefox(
         executable_path = "./geckodriver"
@@ -75,6 +74,7 @@ def get_test_cases(project_list):
         driver.find_element_by_id("login-form-button-set").click()
         time.sleep(3)
         for project in project_list:
+            tmp_obj_list = list()
             find_el = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id))
             find_el.find_element_by_class_name("jstree-icon").click()
             entire_section = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id)).get_attribute('innerHTML')
@@ -83,12 +83,15 @@ def get_test_cases(project_list):
                 resid = row.get('resid')
                 if int(resid) != project.self_id:
                     name = row.get('name')
-                    globals()['%s' % resid] = SquashElement(int(resid), name, 'folder', project.self_id)
+                    kind = row.get('rel')
+                    globals()['%s' % resid] = SquashElement(int(resid), name, kind, project.self_id)
+                    #print(globals()['%s' % resid].name, globals()['%s' % resid].self_id, globals()['%s' % resid].kind, globals()['%s' % resid].parrent_id)
                     object_list.append(globals()['%s' % resid])
                     project.add_object(int(resid))
-                    #print("current: %s" % project.inner_objects)
+
             find_el.find_element_by_class_name("jstree-icon").click()
-            #print("total: %s" % project.inner_objects)
+            
+        final_list = list()
         final_list.append(project_list)
         final_list.append(object_list)
 
