@@ -37,7 +37,7 @@ import time
 #    return projects
 
 def get_projects():
-    projects = dict()
+    project_list = list()
     with Session() as s:
         s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
         raw_resp = s.get(OLD_SQUASH_PROJECTS_URL).content.decode()
@@ -47,9 +47,10 @@ def get_projects():
         pr_id = row.find('td', attrs={'class':'project-id'})
         pr_name = row.find('td', attrs={'class':'name'})
         if pr_id and pr_name != None:
-            projects[pr_id.text] = pr_name.text
+            globals()['%s' % pr_id.text] = SquashElement(int(pr_id.text), pr_name.text, 'project', None)
+            project_list.append(globals()['%s' % pr_id.text])
   
-    return projects
+    return project_list
 
 
 
@@ -57,19 +58,12 @@ def get_projects():
 def get_requirements():
     pass
 
-def get_test_cases(id_list):
-    pr_dicts = dict()
-    #for pr_id in id_list:
-    #    pr_dicts[pr_id] = ('pr' + pr_id)
-    #    current_pr = pr_dicts.get(pr_id)
-    #    globals()[current_pr] = dict()
-
-    #print(type(pr19))
-    #for k,v in pr19.items():
-    #    print(k,v)
-
+def get_test_cases(project_list):
+    object_list = list()
+    final_list = list()
+    
     driver = webdriver.Firefox(
-            executable_path = "./geckodriver"
+        executable_path = "./geckodriver"
     )
     
     driver.maximize_window()
@@ -80,39 +74,24 @@ def get_test_cases(id_list):
         driver.find_element_by_id("j_password").send_keys(OLD_SQUASH_PASS)
         driver.find_element_by_id("login-form-button-set").click()
         time.sleep(3)
-        for pr_id in id_list:
-            #pr_dicts[pr_id] = ('pr' + pr_id)
-            #current_pr = pr_dicts.get(pr_id)
-            #globals()[current_pr] = dict()
-            ##print(type(current_pr))
-            #print(type('pr' + pr_id))
-
-
-            #print("%s #####################################################################################" % pr_id)
-            find_el = driver.find_element_by_id('TestCaseLibrary-' + pr_id)
-            #print("id = %s, elem = %s" % (pr_id, find_el.get_attribute('innerHTML')))
+        for project in project_list:
+            find_el = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id))
             find_el.find_element_by_class_name("jstree-icon").click()
-            #find_el = driver.find_element_by_tag_name("ul")
-            #find_el = find_el.find_element_by_tag_name("li")
-            #find_el = driver.find_element_by_class_name("jstree-closed")
-            #find_el = driver.find_element_by_id('TestCaseFolder-535')
-            entire_section = driver.find_element_by_id('TestCaseLibrary-' + pr_id).get_attribute('innerHTML')
+            entire_section = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id)).get_attribute('innerHTML')
             parsed_resp = bs(entire_section, "lxml")
             for row in parsed_resp.find_all('li'):
-                #res_id = (row.find('li', attrs={'resid'}))
                 resid = row.get('resid')
-                name = row.get('name')
-                #folder_id = row.get('id')
-                #current_pr[resid] = name
+                if int(resid) != project.self_id:
+                    name = row.get('name')
+                    globals()['%s' % resid] = SquashElement(int(resid), name, 'folder', project.self_id)
+                    object_list.append(globals()['%s' % resid])
+                    project.add_object(int(resid))
+                    #print("current: %s" % project.inner_objects)
+            find_el.find_element_by_class_name("jstree-icon").click()
+            #print("total: %s" % project.inner_objects)
+        final_list.append(project_list)
+        final_list.append(object_list)
 
-                print(resid, name)
-                #print("####################")
-
-            #for k,v in current_pr.items():
-            #    print(k,v)
-            #time.sleep(2)
-
-        print(type(pr19))
     
 
     except Exception as _ex:
@@ -123,7 +102,7 @@ def get_test_cases(id_list):
 
 
   
-    #return test_cases
+    return final_list
 
 
 

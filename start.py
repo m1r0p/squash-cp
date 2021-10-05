@@ -9,13 +9,17 @@ from functions import *
 
 ###### start 
 def main():
-    pr_dict = get_projects()
-    #for i in pr_dict.keys():
-    #    print(i)
+    pr_list = get_projects()
+    #for i in pr_list:
+    #    print(i.self_id)
 
-    test_cases = get_test_cases(pr_dict.keys())
-    #for i in test_cases.keys():
-    #    print(i)
+    test_cases = get_test_cases(pr_list)
+    for i in test_cases:
+        for j in i:
+            if j.kind == 'folder':
+                print("####################################################################################################")
+                print("id = %s name = %s" % (j.self_id, j.name))
+                print("inner objects: %s" % j.inner_objects)
 
 if __name__ == "__main__":
     main()
