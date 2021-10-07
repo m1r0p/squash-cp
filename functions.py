@@ -47,7 +47,7 @@ def get_projects():
         pr_id = row.find('td', attrs={'class':'project-id'})
         pr_name = row.find('td', attrs={'class':'name'})
         if pr_id and pr_name != None:
-            globals()['%s' % pr_id.text] = SquashElement(int(pr_id.text), pr_name.text, 'project', None)
+            globals()['%s' % pr_id.text] = SquashElement(int(pr_id.text), pr_name.text, 'project', None, 0)
             project_list.append(globals()['%s' % pr_id.text])
   
     return project_list
@@ -58,7 +58,7 @@ def get_projects():
 def get_requirements():
     pass
 
-def get_test_cases(project_list):
+def get_test_cases(upper_object_list):
     object_list = list()
     
     driver = webdriver.Firefox(
@@ -73,26 +73,26 @@ def get_test_cases(project_list):
         driver.find_element_by_id("j_password").send_keys(OLD_SQUASH_PASS)
         driver.find_element_by_id("login-form-button-set").click()
         time.sleep(3)
-        for project in project_list:
-            tmp_obj_list = list()
-            find_el = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id))
+        for upper_object in upper_object_list:
+            #tmp_obj_list = list()
+            find_el = driver.find_element_by_id('TestCaseLibrary-' + str(upper_object.self_id))
             find_el.find_element_by_class_name("jstree-icon").click()
-            entire_section = driver.find_element_by_id('TestCaseLibrary-' + str(project.self_id)).get_attribute('innerHTML')
+            entire_section = driver.find_element_by_id('TestCaseLibrary-' + str(upper_object.self_id)).get_attribute('innerHTML')
             parsed_resp = bs(entire_section, "lxml")
             for row in parsed_resp.find_all('li'):
                 resid = row.get('resid')
-                if int(resid) != project.self_id:
+                if int(resid) != upper_object.self_id:
                     name = row.get('name')
                     kind = row.get('rel')
-                    globals()['%s' % resid] = SquashElement(int(resid), name, kind, project.self_id)
+                    globals()['%s' % resid] = SquashElement(int(resid), name, kind, upper_object.self_id, upper_object.sub_level + 1)
                     #print(globals()['%s' % resid].name, globals()['%s' % resid].self_id, globals()['%s' % resid].kind, globals()['%s' % resid].parrent_id)
                     object_list.append(globals()['%s' % resid])
-                    project.add_object(int(resid))
+                    upper_object.add_object(int(resid))
 
             find_el.find_element_by_class_name("jstree-icon").click()
             
         final_list = list()
-        final_list.append(project_list)
+        final_list.append(upper_object_list)
         final_list.append(object_list)
 
     
