@@ -16,7 +16,7 @@ def main():
     test_cases = get_test_cases(pr_list)
     for i in test_cases:
         for j in i:
-            if j.kind == 'file':
+            if j.kind == 'folder':
                 print("####################################################################################################")
                 print("id = %s name = %s kind = %s sub_level = %s " % (j.self_id, j.name, j.kind, j.sub_level))
                 print("parrent id = %s" % (j.parrent_id))
