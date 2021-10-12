@@ -8,12 +8,18 @@ from config import (
         OLD_SQUASH_CASES_URL,
         OLD_SQUASH_USER,
         OLD_SQUASH_PASS,
+        NEW_SQUASH_PROJECTS_URL,
+        NEW_SQUASH_USER,
+        NEW_SQUASH_PASS,
+
 )
 
 from classes import *
 
 ##### libraries
-from requests import Request, Session
+import requests
+#from requests import Request, Session
+from requests.auth import HTTPBasicAuth
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -22,12 +28,25 @@ import time
 
 ###### functions
 
+#def get_projects():
+#    project_list = list()
+#    with Session() as s:
+#        s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
+#        raw_resp = s.get(OLD_SQUASH_PROJECTS_URL).content.decode()
+#    
+#    parsed_resp = bs(raw_resp, "lxml")
+#    for row in parsed_resp.find_all('tr'):
+#        pr_id = row.find('td', attrs={'class':'project-id'})
+#        pr_name = row.find('td', attrs={'class':'name'})
+#        if pr_id and pr_name != None:
+#            globals()['%s' % pr_id.text] = SquashElement(int(pr_id.text), pr_name.text, 'project', None, 0)
+#            project_list.append(globals()['%s' % pr_id.text])
+#  
+#    return project_list
+
 def get_projects():
     project_list = list()
-    with Session() as s:
-        s.auth = (OLD_SQUASH_USER,OLD_SQUASH_PASS)
-        raw_resp = s.get(OLD_SQUASH_PROJECTS_URL).content.decode()
-    
+    raw_resp = requests.get(OLD_SQUASH_PROJECTS_URL, auth=HTTPBasicAuth(OLD_SQUASH_USER,OLD_SQUASH_PASS)).content.decode()
     parsed_resp = bs(raw_resp, "lxml")
     for row in parsed_resp.find_all('tr'):
         pr_id = row.find('td', attrs={'class':'project-id'})
@@ -94,5 +113,11 @@ def get_test_cases(upper_object_list):
     return final_list
 
 
+
+def test_api():
+    query = {'Accept':'application/json'}
+    resp = requests.get(NEW_SQUASH_PROJECTS_URL, auth=HTTPBasicAuth(NEW_SQUASH_USER,NEW_SQUASH_PASS), params=query)
+
+    return resp
 
 
