@@ -37,7 +37,7 @@ def main():
 
 
     for pr in pr_list:
-        if pr.name == 'Corsair Voyager Air':
+        if pr.name == 'RiskOrganizer':
             req = get_inner_objects_from_old_squash(pr, OLD_SQUASH_REQ_LIB)
             for i in req[1]:
                if i.kind == 'folder':

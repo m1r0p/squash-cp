@@ -201,13 +201,13 @@ def get_projects_from_old_squash():
 #    return final_list
 
 def get_inner_objects_from_old_squash(up_obj, bso):
-    #object_list = list()
+    object_list = list()
 
 
     def inn_obj(upper_object, base_searching_object):
-        print(object_list)
-        object_list = list()
-        
+        #print(object_list)
+        #object_list = list()
+        time.sleep(3)   
         find_el = driver.find_element_by_id(base_searching_object + str(upper_object.self_id))
         find_el.find_element_by_class_name("jstree-icon").click()
         entire_section = find_el.get_attribute('innerHTML')
@@ -227,6 +227,7 @@ def get_inner_objects_from_old_squash(up_obj, bso):
                         inner_searching_object = OLD_SQUASH_CAMP_FOL
                     inner_list = inn_obj(globals()['%s' % resid], inner_searching_object)
                     globals()['%s' % resid] = inner_list[0]
+                    print(inner_list)
                     for obj in inner_list[1]:
                         object_list.append(obj)
 
@@ -256,7 +257,7 @@ def get_inner_objects_from_old_squash(up_obj, bso):
     driver.find_element_by_id("j_username").send_keys(OLD_SQUASH_USER)
     driver.find_element_by_id("j_password").send_keys(OLD_SQUASH_PASS)
     driver.find_element_by_id("login-form-button-set").click()
-    time.sleep(3)
+    #time.sleep(3)
 
     final_list = inn_obj(up_obj, bso)
 
