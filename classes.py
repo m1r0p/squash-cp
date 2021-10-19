@@ -47,4 +47,19 @@ class SquashFile(SquashElement):
         SquashElement.__init__(self, self_id, name, kind, sub_level)
         self.parrent_id = parrent_id
    
+class ReqFile(SquashFile):
+    def __init__(
+            self, 
+            self_id, 
+            name, 
+            kind, 
+            sub_level, 
+            parrent_id, 
+            ):
+        SquashFile.__init__(self, self_id, name, kind, sub_level, parrent_id)
+        self.criticaly = None 
+        self.category = None
+        self.status = None
+        self.description = None 
+
 

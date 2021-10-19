@@ -36,15 +36,13 @@ def main():
     #           print("inner objects: %s" % (j.inner_objects))
 
 
-    for pr in pr_list:
-        if pr.name == 'RiskOrganizer':
-            req = get_inner_objects_from_old_squash(pr, OLD_SQUASH_REQ_LIB)
-            for i in req[1]:
-               if i.kind == 'folder':
-                   print("####################################################################################################")
-                   print("id = %s name = %s kind = %s sub_level = %s " % (i.self_id, i.name, i.kind, i.sub_level))
-                   print("parrent id = %s" % (i.parrent_id))
-                   print("inner objects: %s" % (i.inner_objects))
+    req = get_inner_objects_from_old_squash(pr_list, OLD_SQUASH_REQ_LIB)
+    for i in req:
+       if i.kind == 'folder':
+           print("####################################################################################################")
+           print("id = %s name = %s kind = %s sub_level = %s " % (i.self_id, i.name, i.kind, i.sub_level))
+           print("parrent id = %s" % (i.parrent_id))
+           print("inner objects: %s" % (i.inner_objects))
 
 
 

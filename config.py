@@ -1,6 +1,6 @@
 ###### settings
 ##### old squash settings
-OLD_SQUASH_BASE_URL="http://devx.kiev.ua:8030/squash"
+OLD_SQUASH_BASE_URL="http://192.168.11.237:8030/squash"
 OLD_SQUASH_PROJECTS_URL = OLD_SQUASH_BASE_URL + '/administration/projects'
 OLD_SQUASH_REQ_URL = OLD_SQUASH_BASE_URL + '/requirement-workspace'
 OLD_SQUASH_CASES_URL = OLD_SQUASH_BASE_URL + '/test-case-workspace'
