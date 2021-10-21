@@ -53,53 +53,57 @@ def get_projects_from_old_squash():
 
 
 
+def find_obj(dr, upper_obj, bso):
+    object_list = list()
+    find_el = dr.find_element_by_id(bso + str(upper_obj.self_id))
+    find_el.find_element_by_class_name("jstree-icon").click()
+    #entire_section = find_el.get_attribute('innerHTML')
+    parsed_resp = bs(find_el.get_attribute('innerHTML'), "lxml")
+    for row in parsed_resp.find_all('li'):
+        resid = row.get('resid')
+        if int(resid) != upper_obj.self_id:
+            name = row.get('name')
+            kind = row.get('rel')
+            if bso == OLD_SQUASH_REQ_LIB or OLD_SQUASH_REQ_FOL:
+                folder_so = OLD_SQUASH_REQ_FOL
+            elif bso == OLD_SQUASH_CASES_LIB or OLD_SQUASH_CASES_FOL:
+                folder_so = OLD_SQUASH_CASES_FOL
+                file_class = CaseFile
+            elif bso == OLD_SQUASH_CAMP_LIB or OLD_SQUASH_CAMP_FOL:
+                folder_so = OLD_SQUASH_CAMP_FOL
+                file_class = CampFile
+
+            if kind == 'file' and (bso == OLD_SQUASH_REQ_LIB or OLD_SQUASH_REQ_FOL):
+                print("#########")
+                print(name)
+                find_el.find_element_by_partial_link_text(name).click()
+                criticality = bs(dr.find_element_by_id('requirement-criticality').get_attribute('innerHTML'), "lxml").text
+                print(criticality)
+                globals()['%s' % resid] = ReqFile(int(resid), name, kind, upper_obj.sub_level + 1, upper_obj.self_id, criticality)
+                upper_obj.add_object(int(resid))
+                object_list.append(globals()['%s' % resid])
+
+            elif kind == 'folder':
+                globals()['%s' % resid] = SquashFolder(int(resid), name, kind, upper_obj.sub_level + 1, upper_obj.self_id)
+                upper_obj.add_object(int(resid))
+                current_folder = globals()['%s' % resid]
+                if 'jstree-closed' in row.get('class'):
+                    inner_list = find_obj(dr, current_folder, folder_so)
+                    for obj in inner_list:
+                        object_list.append(obj)
+                    
+
+            else:
+                continue
+
+    object_list.append(upper_obj)
+    find_el.find_element_by_class_name("jstree-icon").click()
+
+    return object_list
+
+
 def get_inner_objects_from_old_squash(project_list, base_searching_object):
     object_list = list()
-
-
-    #def inn_obj(upper_object, base_searching_object):
-    #    #print(object_list)
-    #    #object_list = list()
-    #    time.sleep(3)   
-    #    find_el = driver.find_element_by_id(base_searching_object + str(upper_object.self_id))
-    #    find_el.find_element_by_class_name("jstree-icon").click()
-    #    entire_section = find_el.get_attribute('innerHTML')
-    #    parsed_resp = bs(entire_section, "lxml")
-    #    for row in parsed_resp.find_all('li'):
-    #        resid = row.get('resid')
-    #        if int(resid) != upper_object.self_id:
-    #            name = row.get('name')
-    #            kind = row.get('rel')
-    #            if kind == 'folder':
-    #                globals()['%s' % resid] = SquashFolder(int(resid), name, kind, upper_object.sub_level + 1, upper_object.self_id)
-    #                if base_searching_object == OLD_SQUASH_REQ_LIB or OLD_SQUASH_REQ_FOL:
-    #                    inner_searching_object = OLD_SQUASH_REQ_FOL
-    #                elif base_searching_object == OLD_SQUASH_CASES_LIB or OLD_SQUASH_CASES_FOL:
-    #                    inner_searching_object = OLD_SQUASH_CASES_FOL
-    #                elif base_searching_object == OLD_SQUASH_CAMP_LIB or OLD_SQUASH_CAMP_FOL:
-    #                    inner_searching_object = OLD_SQUASH_CAMP_FOL
-    #                inner_list = inn_obj(globals()['%s' % resid], inner_searching_object)
-    #                globals()['%s' % resid] = inner_list[0]
-    #                print(inner_list)
-    #                for obj in inner_list[1]:
-    #                    object_list.append(obj)
-
-    #            elif kind == 'file':
-    #                globals()['%s' % resid] = SquashFile(int(resid), name, kind, upper_object.sub_level + 1, upper_object.self_id)
-    #            else:
-    #                continue
-
-    #            object_list.append(globals()['%s' % resid])
-    #            upper_object.add_object(int(resid))
-
-    #        find_el.find_element_by_class_name("jstree-icon").click()
-    #        
-    #    final_list = list()
-    #    final_list.append(upper_object)
-    #    final_list.append(object_list)
-
-    #    return final_list
-
 
     driver = webdriver.Firefox(
         executable_path = "./geckodriver"
@@ -113,131 +117,13 @@ def get_inner_objects_from_old_squash(project_list, base_searching_object):
     time.sleep(3)
     
     for project in project_list:
-        find_el0 = driver.find_element_by_id(base_searching_object + str(project.self_id))
-        find_el0.find_element_by_class_name("jstree-icon").click()
-        entire_section = find_el0.get_attribute('innerHTML')
-        parsed_resp = bs(entire_section, "lxml")
-        for row in parsed_resp.find_all('li'):
-            resid = row.get('resid')
-            if int(resid) != project.self_id:
-                name = row.get('name')
-                kind = row.get('rel')
-                if base_searching_object == OLD_SQUASH_REQ_LIB:
-                    inner_searching_object = OLD_SQUASH_REQ_FOL
-                    file_class = ReqFile
-                elif base_searching_object == OLD_SQUASH_CASES_LIB:
-                    inner_searching_object = OLD_SQUASH_CASES_FOL
-                    file_class = CaseFile
-                elif base_searching_object == OLD_SQUASH_CAMP_LIB:
-                    inner_searching_object = OLD_SQUASH_CAMP_FOL
-                    file_class = CampFile
-
-                if kind == 'file':
-                    globals()['%s' % resid] = file_class(int(resid), name, kind, project.sub_level + 1, project.self_id)
-                    object_list.append(globals()['%s' % resid])
-                    project.add_object(int(resid))
-
-                elif kind == 'folder':
-                    globals()['%s' % resid] = SquashFolder(int(resid), name, kind, project.sub_level + 1, project.self_id)
-                    project.add_object(int(resid))
-                    folder1 = globals()['%s' % resid]
-
-                    if base_searching_object == OLD_SQUASH_REQ_LIB:
-                        inner_searching_object = OLD_SQUASH_REQ_FOL
-                    elif base_searching_object == OLD_SQUASH_CASES_LIB:
-                        inner_searching_object = OLD_SQUASH_CASES_FOL
-                    elif base_searching_object == OLD_SQUASH_CAMP_LIB:
-                        inner_searching_object = OLD_SQUASH_CAMP_FOL
-                    find_el = driver.find_element_by_id(inner_searching_object + str(folder1.self_id))
-                    find_el.find_element_by_class_name("jstree-icon").click()
-                    entire_section = find_el.get_attribute('innerHTML')
-                    parsed_resp = bs(entire_section, "lxml")
-                    for row in parsed_resp.find_all('li'):
-                        resid = row.get('resid')
-                        if int(resid) != folder1.self_id:
-                            name = row.get('name')
-                            kind = row.get('rel')
-                            if kind == 'file':
-                                globals()['%s' % resid] = SquashFile(int(resid), name, kind, folder1.sub_level + 1, folder1.self_id)
-                                object_list.append(globals()['%s' % resid])
-                                folder1.add_object(int(resid))
-
-                            elif kind == 'folder':
-                                globals()['%s' % resid] = SquashFolder(int(resid), name, kind, folder1.sub_level + 1, folder1.self_id)
-                                folder1.add_object(int(resid))
-                                folder2 = globals()['%s' % resid]
-                                find_el = driver.find_element_by_id(inner_searching_object + str(folder2.self_id))
-                                find_el.find_element_by_class_name("jstree-icon").click()
-                                entire_section = find_el.get_attribute('innerHTML')
-                                parsed_resp = bs(entire_section, "lxml")
-                                for row in parsed_resp.find_all('li'):
-                                    resid = row.get('resid')
-                                    if int(resid) != folder2.self_id:
-                                        name = row.get('name')
-                                        kind = row.get('rel')
-                                        if kind == 'file':
-                                            globals()['%s' % resid] = SquashFile(int(resid), name, kind, folder2.sub_level + 1, folder2.self_id)
-                                            object_list.append(globals()['%s' % resid])
-                                            folder2.add_object(int(resid))
-
-                                        elif kind == 'folder':
-                                            globals()['%s' % resid] = SquashFolder(int(resid), name, kind, folder2.sub_level + 1, folder2.self_id)
-                                            folder2.add_object(int(resid))
-                                            folder3 = globals()['%s' % resid]
-                                            find_el = driver.find_element_by_id(inner_searching_object + str(folder3.self_id))
-                                            find_el.find_element_by_class_name("jstree-icon").click()
-                                            entire_section = find_el.get_attribute('innerHTML')
-                                            parsed_resp = bs(entire_section, "lxml")
-                                            for row in parsed_resp.find_all('li'):
-                                                resid = row.get('resid')
-                                                if int(resid) != folder3.self_id:
-                                                    name = row.get('name')
-                                                    kind = row.get('rel')
-                                                    if kind == 'file':
-                                                        globals()['%s' % resid] = SquashFile(int(resid), name, kind, folder3.sub_level + 1, folder3.self_id)
-                                                        object_list.append(globals()['%s' % resid])
-                                                        folder3.add_object(int(resid))
-
-                                                    elif kind == 'folder':
-                                                        globals()['%s' % resid] = SquashFolder(int(resid), name, kind, folder3.sub_level + 1, folder3.self_id)
-                                                        folder3.add_object(int(resid))
-                                                        folder4 = globals()['%s' % resid]
-
-
-                                                        object_list.append(folder4)
-                                                        
-                                                    else:
-                                                        continue
-
-                                            object_list.append(folder3)
-                                            #find_el.find_element_by_class_name("jstree-icon").click()
-
-                                        else:
-                                            continue
-
-                                object_list.append(folder2)
-                                #find_el.find_element_by_class_name("jstree-icon").click()
-
-                            else:
-                                continue
-
-                    object_list.append(folder1)
-                    #find_el.find_element_by_class_name("jstree-icon").click()
-
-                else:
-                    continue
-
-        object_list.append(project)
-        find_el0.find_element_by_class_name("jstree-icon").click()
-            
-        #final_list = list()
-        #final_list.append(upper_object)
-        #final_list.append(object_list)
+        inner_list = find_obj(driver, project, base_searching_object)
+        for obj in inner_list:
+            object_list.append(obj)
     driver.close()
     driver.quit()
   
     return object_list
-
 
 
 def get_projects_from_new_squash():

@@ -54,10 +54,11 @@ class ReqFile(SquashFile):
             name, 
             kind, 
             sub_level, 
-            parrent_id, 
+            parrent_id,
+            criticality,
             ):
         SquashFile.__init__(self, self_id, name, kind, sub_level, parrent_id)
-        self.criticaly = None 
+        self.criticality = None 
         self.category = None
         self.status = None
         self.description = None 
