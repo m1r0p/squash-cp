@@ -66,4 +66,9 @@ class ReqFile(SquashFile):
         self.status = status
         self.description = description
 
+class CampFile(SquashFolder):
+    def __init__(self, self_id, name, kind, sub_level, parrent_id):
+        SquashFolder.__init__(self, self_id, name, kind, sub_level, parrent_id)
+    
+
 

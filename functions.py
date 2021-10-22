@@ -111,6 +111,58 @@ def find_obj(dr, upper_obj, bso):
                     description = ""
 
                 #print(criticality)
+                globals()['%s' % resid] = CampFile(
+                        int(resid), 
+                        name, 
+                        kind, 
+                        upper_obj.sub_level + 1, 
+                        upper_obj.self_id, 
+                        criticality, 
+                        category,
+                        status,
+                        description
+                        )
+                upper_obj.add_object(int(resid))
+                object_list.append(globals()['%s' % resid])
+
+            if kind == 'file' and (bso == OLD_SQUASH_CAMP_LIB or OLD_SQUASH_CAMP_FOL):
+                #print("#########")
+                #print("UPPER - %s" % upper_obj.name)
+                #print(name)
+                try:
+                    find_success = 1
+                    find_el.find_element_by_partial_link_text(name).click()
+                except:
+                    find_success = 0
+
+                if find_success == 1:
+                    try:
+                        criticality = bs(dr.find_element_by_id('requirement-criticality').get_attribute('innerHTML'), "lxml").text
+                    except:
+                        criticality = 'Manual selection'
+                    try:
+                        category = bs(dr.find_element_by_id('requirement-category').get_attribute('innerHTML'), "lxml").text
+                    except:
+                        category = 'Manual selection'
+                    try:
+                        status = bs(dr.find_element_by_id('requirement-status').get_attribute('innerHTML'), "lxml").text
+                    except:
+                        status = 'Manual selection'
+                    try:
+                        #description = "test"
+                        description = bs(dr.find_element_by_id('requirement-description').get_attribute('innerHTML'), "lxml").text
+                    except:
+                        description = ""
+
+
+
+                else:
+                    criticality = 'Manual selection'
+                    category = 'Manual selection'
+                    status = 'Manual'
+                    description = ""
+
+                #print(criticality)
                 globals()['%s' % resid] = ReqFile(
                         int(resid), 
                         name, 
@@ -124,6 +176,8 @@ def find_obj(dr, upper_obj, bso):
                         )
                 upper_obj.add_object(int(resid))
                 object_list.append(globals()['%s' % resid])
+
+
 
             elif kind == 'folder':
                 globals()['%s' % resid] = SquashFolder(int(resid), name, kind, upper_obj.sub_level + 1, upper_obj.self_id)
