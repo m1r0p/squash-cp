@@ -7,6 +7,7 @@ from config import (
         OLD_SQUASH_USER,
         OLD_SQUASH_PASS,
         OLD_SQUASH_PROJECTS_URL,
+        OLD_SQUASH_USERS_URL,
         OLD_SQUASH_REQ_URL,
         OLD_SQUASH_CASES_URL,
         OLD_SQUASH_CAMP_URL,
@@ -50,6 +51,21 @@ def get_projects_from_old_squash():
             project_list.append(globals()['%s' % pr_id.text])
   
     return project_list
+
+def get_users_from_old_squash():
+    user_list = list()
+    #raw_resp = requests.get(OLD_SQUASH_USERS_URL, auth=HTTPBasicAuth(OLD_SQUASH_USER,OLD_SQUASH_PASS)).content.decode()
+    parsed_resp = bs(requests.get(OLD_SQUASH_USERS_URL, auth=HTTPBasicAuth(OLD_SQUASH_USER,OLD_SQUASH_PASS)).content.decode(), "lxml")
+    print(parsed_resp)
+    #for row in parsed_resp.find_all('tr'):
+    #    pr_id = row.find('td', attrs={'class':'project-id'})
+    #    pr_name = row.find('td', attrs={'class':'name'})
+    #    #pr_label = row.find('td', attrs={'class':'label'})
+    #    if pr_id and pr_name != None:
+    #        globals()['%s' % pr_id.text] = SquashProject(int(pr_id.text), pr_name.text, 'project', 0)
+    #        project_list.append(globals()['%s' % pr_id.text])
+  
+    #return project_list
 
 
 
@@ -111,58 +127,6 @@ def find_obj(dr, upper_obj, bso):
                     description = ""
 
                 #print(criticality)
-                globals()['%s' % resid] = CampFile(
-                        int(resid), 
-                        name, 
-                        kind, 
-                        upper_obj.sub_level + 1, 
-                        upper_obj.self_id, 
-                        criticality, 
-                        category,
-                        status,
-                        description
-                        )
-                upper_obj.add_object(int(resid))
-                object_list.append(globals()['%s' % resid])
-
-            if kind == 'file' and (bso == OLD_SQUASH_CAMP_LIB or OLD_SQUASH_CAMP_FOL):
-                #print("#########")
-                #print("UPPER - %s" % upper_obj.name)
-                #print(name)
-                try:
-                    find_success = 1
-                    find_el.find_element_by_partial_link_text(name).click()
-                except:
-                    find_success = 0
-
-                if find_success == 1:
-                    try:
-                        criticality = bs(dr.find_element_by_id('requirement-criticality').get_attribute('innerHTML'), "lxml").text
-                    except:
-                        criticality = 'Manual selection'
-                    try:
-                        category = bs(dr.find_element_by_id('requirement-category').get_attribute('innerHTML'), "lxml").text
-                    except:
-                        category = 'Manual selection'
-                    try:
-                        status = bs(dr.find_element_by_id('requirement-status').get_attribute('innerHTML'), "lxml").text
-                    except:
-                        status = 'Manual selection'
-                    try:
-                        #description = "test"
-                        description = bs(dr.find_element_by_id('requirement-description').get_attribute('innerHTML'), "lxml").text
-                    except:
-                        description = ""
-
-
-
-                else:
-                    criticality = 'Manual selection'
-                    category = 'Manual selection'
-                    status = 'Manual'
-                    description = ""
-
-                #print(criticality)
                 globals()['%s' % resid] = ReqFile(
                         int(resid), 
                         name, 
@@ -176,6 +140,58 @@ def find_obj(dr, upper_obj, bso):
                         )
                 upper_obj.add_object(int(resid))
                 object_list.append(globals()['%s' % resid])
+
+            #if kind == 'file' and (bso == OLD_SQUASH_CAMP_LIB or OLD_SQUASH_CAMP_FOL):
+            #    #print("#########")
+            #    #print("UPPER - %s" % upper_obj.name)
+            #    #print(name)
+            #    try:
+            #        find_success = 1
+            #        find_el.find_element_by_partial_link_text(name).click()
+            #    except:
+            #        find_success = 0
+
+            #    if find_success == 1:
+            #        try:
+            #            criticality = bs(dr.find_element_by_id('requirement-criticality').get_attribute('innerHTML'), "lxml").text
+            #        except:
+            #            criticality = 'Manual selection'
+            #        try:
+            #            category = bs(dr.find_element_by_id('requirement-category').get_attribute('innerHTML'), "lxml").text
+            #        except:
+            #            category = 'Manual selection'
+            #        try:
+            #            status = bs(dr.find_element_by_id('requirement-status').get_attribute('innerHTML'), "lxml").text
+            #        except:
+            #            status = 'Manual selection'
+            #        try:
+            #            #description = "test"
+            #            description = bs(dr.find_element_by_id('requirement-description').get_attribute('innerHTML'), "lxml").text
+            #        except:
+            #            description = ""
+
+
+
+            #    else:
+            #        criticality = 'Manual selection'
+            #        category = 'Manual selection'
+            #        status = 'Manual'
+            #        description = ""
+
+            #    #print(criticality)
+            #    globals()['%s' % resid] = CampFile(
+            #            int(resid), 
+            #            name, 
+            #            kind, 
+            #            upper_obj.sub_level + 1, 
+            #            upper_obj.self_id, 
+            #            criticality, 
+            #            category,
+            #            status,
+            #            description
+            #            )
+            #    upper_obj.add_object(int(resid))
+            #    object_list.append(globals()['%s' % resid])
 
 
 

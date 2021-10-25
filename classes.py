@@ -17,6 +17,20 @@
 #    def add_object(self, objid):
 #        self.inner_objects.append(objid)
 
+class User:
+    def __init__(self, uid, login, group, first_name, last_name, email):
+        self.uid = uid
+        self.login = login
+        self.password = 'q123456_'
+        self.group = group
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.projects = dict()
+
+    def add_project(self, project, profile):
+        self.projects[project] = profile
+ 
 class SquashElement:
     def __init__(self, self_id, name, kind, sub_level):
         self.self_id = self_id
@@ -29,9 +43,13 @@ class SquashProject(SquashElement):
     def __init__(self, self_id, name, kind, sub_level):
         SquashElement.__init__(self, self_id, name, kind, sub_level)
         self.inner_objects = list()
+        self.users = dict()
     
     def add_object(self, objid):
         self.inner_objects.append(objid)
+
+    def add_user(self, user, profile):
+        self.users[user] = profile
 
 class SquashFolder(SquashElement):
     def __init__(self, self_id, name, kind, sub_level, parrent_id):
